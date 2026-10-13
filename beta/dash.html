@@ -1,0 +1,247 @@
+<html>
+<head>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="https://file.garden/Z_Zkhskjxktxt43S/Memezy/logo.v1.png">
+    
+    
+<title>Memezy - feed</title>
+<style>
+
+            body {
+
+                font-family:Plus Jakarta Sans;
+                text-align:center;
+
+            }
+
+            .header {
+                
+            display: flex;
+            align-items: center; /* Vertically centers text with image */
+            gap: 10px;           /* Adds space between image and text */
+            justify-content:center;
+            }
+
+            .header > h1 {
+
+                color:#2f355d;
+
+            }
+
+            #feed {
+
+                color:white;
+                background-color:black;
+                padding:10px;
+                height:500px;
+                border-radius:20px;
+                text-align:center;
+                display: flex;
+                align-items:center;
+                justify-content:center;
+
+            }
+            
+            #feed > img {
+                height:480px;
+            }
+
+            button {
+
+                color:white;
+                font-family:Plus Jakarta Sans;
+                background-color:#6374c8;
+                border:none;
+                width:300px;
+                height:50px;
+                border-radius:20px;
+                margin-top:10px;
+                transition-duration:0.4s;
+
+            }
+            
+            button:hover {
+                width:320px;
+                background-color:#637fc8;
+            }
+            
+            .daymeme > img {
+                width:250px;
+                border-radius:15px;
+                border:15px solid #2F355D;
+                margin-top:10px;
+                transition-duration:0.4s;
+            }
+            
+            .daymeme > img:hover {
+                width:450px;
+                border:10px solid #2F355D;
+            }
+            
+            .daymeme {
+                background-color:#e3e6f2;
+                padding:5px;
+                border-radius:15px;
+                color:#2F355D;
+            }
+            
+            #fav {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    padding: 15px;
+    width: auto;
+    height: 200px;
+
+    background-color: #e3e6f2;
+    border-radius: 15px;
+    align-items: center;
+}
+
+#fav > img {
+    height: 150px;
+    width: auto;
+    max-width: none;
+    flex-shrink: 0;
+
+    border-radius: 10px;
+    object-fit: contain;
+}
+            
+</style>
+</head>
+<body>
+<div class="header">
+    <img src="https://file.garden/Z_Zkhskjxktxt43S/Memezy/logo.v1.png" width="50px">
+<h1>Memezy</h1>
+</div>
+<hr>
+<h1>Hey Onion! 👋 </h1>
+<div class="daymeme"><img alt="Meme of the day!"> <h3>Meme of the day</h3></div>
+<h3>Favorites</h3>
+<div id="fav">
+</div>
+<button>Open feed</button>
+<script>
+const favContainer = document.querySelector("#fav");
+const dayMeme = document.querySelector(".daymeme > img");
+
+const STORAGE_KEY = "memezy_favorites";
+const DAILY_KEY = "memezy_daily_meme";
+const TOTAL_MEMES = 35;
+
+const MEME_URL =
+    "https://file.garden/Z_Zkhskjxktxt43S/Memezy/meme/";
+
+// -------------------------
+// FAVORITES
+// -------------------------
+
+function getFavorites() {
+    try {
+        const favorites = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        return Array.isArray(favorites) ? favorites : [];
+    } catch {
+        return [];
+    }
+}
+
+function renderFavorites() {
+    const favorites = getFavorites();
+
+    favContainer.innerHTML = "";
+
+    if (favorites.length === 0) {
+        favContainer.textContent = "No favorites yet!";
+        return;
+    }
+
+    favorites.forEach(id => {
+        const img = document.createElement("img");
+
+        img.src = MEME_URL + id;
+        img.alt = "Meme " + id;
+        img.dataset.memeId = id;
+        img.title = "Click to remove from favorites";
+
+        img.addEventListener("click", () => {
+            const updated = getFavorites().filter(
+                favorite => String(favorite) !== String(id)
+            );
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+            renderFavorites();
+        });
+
+        favContainer.appendChild(img);
+    });
+}
+
+// -------------------------
+// MEME OF THE DAY
+// -------------------------
+
+function getToday() {
+    const now = new Date();
+
+    // Uses the visitor's local calendar date
+    return [
+        now.getFullYear(),
+        String(now.getMonth() + 1).padStart(2, "0"),
+        String(now.getDate()).padStart(2, "0")
+    ].join("-");
+}
+
+function getDailyMeme() {
+    const today = getToday();
+
+    try {
+        const saved = JSON.parse(localStorage.getItem(DAILY_KEY));
+
+        if (
+            saved &&
+            saved.date === today &&
+            Number.isInteger(saved.id) &&
+            saved.id >= 1 &&
+            saved.id <= TOTAL_MEMES
+        ) {
+            return saved.id;
+        }
+    } catch {
+        // Generate a new daily meme if saved data is invalid
+    }
+
+    const id = Math.floor(Math.random() * TOTAL_MEMES) + 1;
+
+    localStorage.setItem(
+        DAILY_KEY,
+        JSON.stringify({ date: today, id: id })
+    );
+
+    return id;
+}
+
+function renderDailyMeme() {
+    const id = getDailyMeme();
+
+    dayMeme.src = MEME_URL + id;
+    dayMeme.alt = "Meme of the day: Meme " + id;
+}
+
+// -------------------------
+// START
+// -------------------------
+
+renderFavorites();
+renderDailyMeme();
+</script>
+</body>
+</html>
+ 
