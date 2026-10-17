@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -113,7 +112,7 @@
 
     <hr>
 
-    <h1>Hey Onion! 👋</h1>
+    <h1 id="welcome">Hey UNKNOWN USER! 👋</h1>
 
     <div class="daymeme">
         <img alt="Meme of the day!">
@@ -133,6 +132,9 @@
         const STORAGE_KEY = "memezy_favorites";
         const DAILY_KEY = "memezy_daily_meme";
         const TOTAL_MEMES = 35;
+        const username = localStorage.getItem("username")
+        
+        document.getElementById("welcome").innerText = "Hey " + username + "! 👋"
 
         const MEME_URL =
             "https://file.garden/Z_Zkhskjxktxt43S/Memezy/meme/";
