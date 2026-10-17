@@ -1,0 +1,108 @@
+<html>
+<head>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="https://file.garden/Z_Zkhskjxktxt43S/Memezy/logo.v1.png">
+    
+    
+<title>Memezy</title>
+<style>
+
+            body {
+
+                font-family:Plus Jakarta Sans;
+                text-align:center;
+
+            }
+
+            .header {
+                
+            display: flex;
+            align-items: center; /* Vertically centers text with image */
+            gap: 10px;           /* Adds space between image and text */
+            justify-content:center;
+            }
+
+            .header > h1 {
+
+                color:#2f355d;
+
+            }
+
+            #feed {
+
+                color:white;
+                background-color:black;
+                padding:10px;
+                height:500px;
+                border-radius:20px;
+                text-align:center;
+                display: flex;
+                align-items:center;
+                justify-content:center;
+
+            }
+            
+            #feed > img {
+                height:480px;
+            }
+
+            button {
+
+                color:white;
+                font-family:Plus Jakarta Sans;
+                background-color:#6374c8;
+                border:none;
+                width:300px;
+                height:50px;
+                border-radius:20px;
+                margin-top:10px;
+                transition-duration:0.4s;
+
+            }
+            
+            button:hover {
+                width:320px;
+                background-color:#637fc8;
+            }
+</style>
+</head>
+<body>
+<div class="header">
+    <img src="https://file.garden/Z_Zkhskjxktxt43S/Memezy/logo.v1.png" width="50px">
+<h1>Memezy</h1>
+</div>
+<hr>
+<div id="feed">
+    <img src="https://file.garden/Z_Zkhskjxktxt43S/Memezy/starter.png" id="meme">
+</div>
+<button onclick="meme()">Next</button>
+<button onclick="window.open('https://forms.gle/mCNUHejPUPodsJLe7', '_blank')">Upload</button>
+<script>
+    
+let recentMemes = [];
+
+function meme() {
+    const max = 35;
+    let randomMeme;
+
+    do {
+        randomMeme = Math.floor(Math.random() * max) + 1;
+    } while (recentMemes.includes(randomMeme));
+
+    recentMemes.push(randomMeme);
+
+    if (recentMemes.length > 10) {
+        recentMemes.shift();
+    }
+
+    document.getElementById("meme").src =
+        "https://file.garden/Z_Zkhskjxktxt43S/Memezy/meme/" + randomMeme;
+}
+
+</script>
+</body>
+</html>
+ 
