@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://file.garden/Z_Zkhskjxktxt43S/Memezy/logo.v1.png">
+
+    <title>Memezy</title>
+
+    <style>
+        body {
+            font-family: "Plus Jakarta Sans", sans-serif;
+            text-align: center;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .header > h1 {
+            color: #2f355d;
+        }
+
+        #feed {
+            color: white;
+            background-color: black;
+            padding: 10px;
+            height: 500px;
+            border-radius: 20px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #feed > img {
+            max-height: 480px;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        button {
+            color: white;
+            font-family: Plus Jakarta Sans;
+            background-color: #6374c8;
+            border: none;
+            width: 300px;
+            height: 50px;
+            border-radius: 20px;
+            margin-top: 10px;
+            transition-duration: 0.4s;
+        }
+
+        button:hover {
+            width: 320px;
+            background-color: #637fc8;
+        }
+
+        input {
+            border-radius:20px;
+            padding:10px;
+            width:90%;
+            transition:0.5s ease;
+        }
+
+        input:hover {
+            padding:14px;
+            width:95%;
+        }
+
+        #console {
+            margin-top:30px;
+            font-family:monospace, serif;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img
+            src="https://file.garden/Z_Zkhskjxktxt43S/Memezy/logo.v1.png"
+            width="50px"
+            alt="Memezy logo"
+        >
+        <h1>Memezy</h1>
+    </div>
+
+    <hr>
+
+    <div id="account-form">
+        <p style="margin-top:50px;">Enter your username</p>
+
+        <input id="input" type="text" maxlength="25" placeholder="Username">
+        <button type="button" onclick="save()">Save</button>
+
+        <div id="console"></div>
+        <p id="message"></p>
+    </div>
+
+    <div id="saved-account" style="display:none;">
+        <p>Welcome to Memezy!</p>
+        <p>Your username:</p>
+        <p id="saved-username"></p>
+
+        <button type="button" onclick="changeUsername()">Change Username</button>
+        <button type="button" onclick="window.location.href='/dash.html'">Dashboard</button>
+    </div>
+
+    <script>
+        const USERNAME_KEY = "username";
+
+        function save() {
+            const username = document.getElementById("input").value.trim();
+            const message = document.getElementById("message");
+            const consoleBox = document.getElementById("console");
+
+            if (username === "") {
+                message.textContent = "Please enter a username!";
+                return;
+            }
+
+            localStorage.setItem(USERNAME_KEY, username);
+
+            const confirmation = document.createElement("p");
+            confirmation.textContent = "Saved Username: " + username;
+            consoleBox.replaceChildren(confirmation);
+
+            message.textContent = "";
+            showAccount(username);
+        }
+
+        function showAccount(username) {
+            document.getElementById("account-form").style.display = "none";
+            document.getElementById("saved-account").style.display = "block";
+            document.getElementById("saved-username").textContent = username;
+        }
+
+        function changeUsername() {
+            document.getElementById("account-form").style.display = "block";
+            document.getElementById("saved-account").style.display = "none";
+            document.getElementById("input").value =
+                localStorage.getItem(USERNAME_KEY) || "";
+            document.getElementById("message").textContent = "";
+            document.getElementById("console").replaceChildren();
+        }
+
+        document.getElementById("input").addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                save();
+            }
+        });
+
+        const existingUsername = localStorage.getItem(USERNAME_KEY);
+
+        if (existingUsername && existingUsername.trim() !== "") {
+            showAccount(existingUsername);
+        }
+    </script>
+</body>
+</html>
