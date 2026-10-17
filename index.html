@@ -1,7 +1,9 @@
-
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
@@ -11,7 +13,7 @@
 
     <style>
         body {
-            font-family: Plus Jakarta Sans;
+            font-family: "Plus Jakarta Sans", sans-serif;
             text-align: center;
         }
 
@@ -36,22 +38,27 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
         }
 
         #feed > img {
-            height: 480px;
+            max-height: 480px;
+            max-width: 100%;
+            object-fit: contain;
         }
 
         button {
             color: white;
-            font-family: Plus Jakarta Sans;
+            font-family: "Plus Jakarta Sans", sans-serif;
             background-color: #6374c8;
             border: none;
             width: 300px;
+            max-width: 90%;
             height: 50px;
             border-radius: 20px;
             margin-top: 10px;
-            transition-duration: 0.4s;
+            cursor: pointer;
+            transition: width 0.4s, background-color 0.4s;
         }
 
         button:hover {
@@ -64,7 +71,7 @@
             position: fixed;
             top: 555px;
             left: 20px;
-            transition-duration: 0.5s;
+            transition: transform 0.5s;
             cursor: pointer;
         }
 
@@ -73,16 +80,29 @@
         }
 
         @keyframes fav {
-            0% {
-                transform: translateY(-15px);
+            0% { transform: translateY(-15px); }
+            50% { transform: translateY(-7px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        #dashb {
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            #feed {
+                height: 400px;
             }
 
-            50% {
-                transform: translateY(-7px);
+            #feed > img {
+                max-height: 380px;
             }
 
-            100% {
-                transform: translateY(-10px);
+            #fav {
+                width: 45px;
+                top: auto;
+                bottom: 20px;
+                left: 15px;
             }
         }
     </style>
@@ -90,14 +110,22 @@
 
 <body>
     <div class="header">
-        <img src="https://file.garden/Z_Zkhskjxktxt43S/Memezy/logo.v1.png" width="50px">
+        <img
+            src="https://file.garden/Z_Zkhskjxktxt43S/Memezy/logo.v1.png"
+            width="50"
+            alt="Memezy logo"
+        >
         <h1>Memezy</h1>
     </div>
 
     <hr>
 
     <div id="feed">
-        <img src="https://file.garden/Z_Zkhskjxktxt43S/Memezy/starter.png" id="meme" alt="Meme">
+        <img
+            src="https://file.garden/Z_Zkhskjxktxt43S/Memezy/starter.png"
+            id="meme"
+            alt="Meme"
+        >
     </div>
 
     <img
@@ -111,7 +139,12 @@
     >
 
     <button onclick="meme()">Next</button>
-    <button onclick="window.open('https://forms.gle/mCNUHejPUPodsJLe7', '_blank')">Upload</button>
+
+    <button onclick="window.open('https://forms.gle/mCNUHejPUPodsJLe7', '_blank', 'noopener,noreferrer')">
+        Upload
+    </button>
+
+    <div id="dashb"></div>
 
     <script>
         const MEME_URL =
@@ -124,13 +157,32 @@
             "https://file.garden/Z_Zkhskjxktxt43S/Memezy/fav-off.svg";
 
         const FAVORITES_KEY = "memezy_favorites";
+        const ACCOUNT_KEY = "username";
+
+        // Create the correct account button.
+        const accountName = localStorage.getItem(ACCOUNT_KEY);
+        const dashboardContainer = document.getElementById("dashb");
+        const accountButton = document.createElement("button");
+
+        if (accountName && accountName.trim() !== "") {
+            accountButton.textContent = "Dashboard";
+            accountButton.addEventListener("click", () => {
+                window.location.href = "/dash.html";
+            });
+        } else {
+            accountButton.textContent = "Create Account";
+            accountButton.addEventListener("click", () => {
+                window.location.href = "/acc.html";
+            });
+        }
+
+        dashboardContainer.appendChild(accountButton);
 
         const memeImage = document.getElementById("meme");
         const favButton = document.getElementById("fav");
 
         let recentMemes = [];
 
-        // Get saved favorites.
         function getFavorites() {
             try {
                 const saved = JSON.parse(
@@ -143,7 +195,6 @@
             }
         }
 
-        // Identify the currently displayed numbered meme.
         function getCurrentMemeId() {
             const match = memeImage.src.match(
                 /\/meme\/(\d+)(?:[?#]|$)/i
@@ -152,7 +203,6 @@
             return match ? Number(match[1]) : null;
         }
 
-        // Update the icon to match the current meme's status.
         function updateFavoriteIcon() {
             const id = getCurrentMemeId();
 
@@ -167,6 +217,7 @@
             const isFavorite = getFavorites().includes(id);
 
             favButton.src = isFavorite ? FAV_ON : FAV_OFF;
+
             favButton.alt = isFavorite
                 ? "Remove this meme from favorites"
                 : "Favorite this meme";
@@ -181,14 +232,10 @@
             );
         }
 
-        // Toggle the current meme's favorite status.
         function toggleFavorite() {
             const id = getCurrentMemeId();
 
-            // The starter image isn't a numbered meme.
-            if (id === null) {
-                return;
-            }
+            if (id === null) return;
 
             const favorites = getFavorites();
             const index = favorites.indexOf(id);
@@ -207,10 +254,8 @@
             updateFavoriteIcon();
         }
 
-        // Clicking the icon toggles favorites.
         favButton.addEventListener("click", toggleFavorite);
 
-        // Also allow keyboard interaction.
         favButton.addEventListener("keydown", event => {
             if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
@@ -218,7 +263,6 @@
             }
         });
 
-        // Display a random meme without recently shown repeats.
         function meme() {
             const max = 35;
             let randomMeme;
@@ -234,12 +278,11 @@
             }
 
             memeImage.src = MEME_URL + randomMeme;
+            memeImage.alt = "Meme " + randomMeme;
 
-            // Update the heart for the newly displayed meme.
             updateFavoriteIcon();
         }
 
-        // Set the correct icon when the page first loads.
         updateFavoriteIcon();
     </script>
 </body>
