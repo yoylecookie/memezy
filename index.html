@@ -144,7 +144,9 @@
         Upload
     </button>
 
-    <div id="dashb"></div>
+    <div id="dashb">
+        <button id="accountButton" type="button">Loading account...</button>
+    </div>
 
     <script>
         const MEME_URL =
@@ -159,24 +161,23 @@
         const FAVORITES_KEY = "memezy_favorites";
         const ACCOUNT_KEY = "username";
 
-        // Create the correct account button.
+        // Update the account button.
+        const accountButton = document.getElementById("accountButton");
         const accountName = localStorage.getItem(ACCOUNT_KEY);
-        const dashboardContainer = document.getElementById("dashb");
-        const accountButton = document.createElement("button");
 
         if (accountName && accountName.trim() !== "") {
             accountButton.textContent = "Dashboard";
-            accountButton.addEventListener("click", () => {
+
+            accountButton.addEventListener("click", function() {
                 window.location.href = "/dash.html";
             });
         } else {
             accountButton.textContent = "Create Account";
-            accountButton.addEventListener("click", () => {
+
+            accountButton.addEventListener("click", function() {
                 window.location.href = "/acc.html";
             });
         }
-
-        dashboardContainer.appendChild(accountButton);
 
         const memeImage = document.getElementById("meme");
         const favButton = document.getElementById("fav");
